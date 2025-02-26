@@ -118,11 +118,9 @@ cd YTFETCH</code></pre>
 <button class="copy-button" onclick="copyCode(this)">📋</button>
 </div>
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🤝 Contributing
+
+<div class="contribution-steps">
 
 1. Fork the repository
 2. Create your feature branch
@@ -130,11 +128,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 4. Push to the branch
 5. Open a Pull Request
 
+</div>
+
 ## ⚠️ Disclaimer
 
 This tool is for educational purposes only. Please respect YouTube's terms of service and content creators' rights.
 
-<style>
+<!------------------
+    Styles Section
+------------------->
+<style type="text/css">
+/* Hide this section in rendered markdown */
 .code-block {
     position: relative;
     margin: 10px 0;
@@ -169,9 +173,17 @@ pre {
     border-radius: 6px;
     overflow: auto;
 }
+
+.contribution-steps {
+    padding-left: 20px;
+}
 </style>
 
-<script>
+<!------------------
+    Scripts Section
+------------------->
+<script type="text/javascript">
+/* Hide this section in rendered markdown */
 function copyCode(button) {
     const pre = button.parentElement.querySelector('pre');
     const code = pre.textContent;
