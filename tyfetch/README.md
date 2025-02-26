@@ -1,1 +1,0 @@
-echo "# TYFETCH - YouTube Video Downloader CLI" > README.md

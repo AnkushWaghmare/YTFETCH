@@ -2,16 +2,12 @@ import sys
 import logging
 from setuptools import setup, find_packages
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 try:
     setup(
-        name="ytfetch",  # Changed to lowercase
+        name="ytfetch",
         version="0.1.0",
         packages=find_packages(),
         install_requires=[
@@ -24,17 +20,6 @@ try:
             ]
         },
         python_requires=">=3.6",
-        classifiers=[
-            "Development Status :: 3 - Alpha",
-            "Intended Audience :: End Users/Desktop",
-            "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.6",
-            "Programming Language :: Python :: 3.7",
-            "Programming Language :: Python :: 3.8",
-            "Programming Language :: Python :: 3.9",
-            "License :: OSI Approved :: MIT License",
-            "Operating System :: OS Independent",
-        ],
         description="YouTube Video Downloader CLI with multiple download options",
     )
 except Exception as e:
