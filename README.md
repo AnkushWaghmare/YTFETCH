@@ -120,19 +120,19 @@ cd YTFETCH</code></pre>
 
 ## 🤝 Contributing
 
-<div class="contribution-steps">
-
 1. Fork the repository
 2. Create your feature branch
 3. Commit your changes
 4. Push to the branch
 5. Open a Pull Request
 
-</div>
-
 ## ⚠️ Disclaimer
 
 This tool is for educational purposes only. Please respect YouTube's terms of service and content creators' rights.
+
+## 📦 About
+
+YTFETCH is a fast and versatile CLI YouTube downloader with support for video, audio, playlists, and parallel downloads. Built with Python and designed for efficiency and ease of use.
 
 <!------------------
     Styles Section
