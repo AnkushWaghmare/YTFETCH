@@ -21,68 +21,45 @@ A powerful and flexible YouTube video downloader with multiple download options
 
 ## 🛠️ Installation
 
-### Step 1: Clone the Repository
-<div class="code-block">
-<pre><code class="language-bash">git clone https://github.com/AnkushWaghmare/YTFETCH.git
-cd YTFETCH</code></pre>
-<button class="copy-button" onclick="copyCode(this)">📋</button>
-</div>
-
-### Step 2: Upgrade pip (Required)
-<div class="code-block">
-<pre><code class="language-bash">python -m pip install --upgrade pip</code></pre>
-<button class="copy-button" onclick="copyCode(this)">📋</button>
-</div>
-
-### Step 3: Install Package
-<div class="code-block">
-<pre><code class="language-bash">python -m pip install -e .</code></pre>
-<button class="copy-button" onclick="copyCode(this)">📋</button>
-</div>
-
-### Alternative: Install Dependencies Only
-<div class="code-block">
-<pre><code class="language-bash">python -m pip install -r requirements.txt</code></pre>
-<button class="copy-button" onclick="copyCode(this)">📋</button>
-</div>
+Clone and install:
+```bash
+git clone https://github.com/AnkushWaghmare/YTFETCH.git
+cd YTFETCH
+python -m pip install --upgrade pip
+python -m pip install -e .
+```
 
 ## 💡 Usage
 
-### Basic Video Download
-<div class="code-block">
-<pre><code class="language-bash">ytfetch https://youtube.com/watch?v=VIDEO_ID</code></pre>
-<button class="copy-button" onclick="copyCode(this)">📋</button>
-</div>
+Basic video download:
+```bash
+ytfetch https://youtube.com/watch?v=VIDEO_ID
+```
 
-### Download with Specific Resolution
-<div class="code-block">
-<pre><code class="language-bash">ytfetch -r 1080 https://youtube.com/watch?v=VIDEO_ID</code></pre>
-<button class="copy-button" onclick="copyCode(this)">Copy</button>
-</div>
+Download with specific resolution:
+```bash
+ytfetch -r 1080 https://youtube.com/watch?v=VIDEO_ID
+```
 
-### Extract Audio Only
-<div class="code-block">
-<pre><code class="language-bash">ytfetch -a https://youtube.com/watch?v=VIDEO_ID</code></pre>
-<button class="copy-button" onclick="copyCode(this)">Copy</button>
-</div>
+Extract audio:
+```bash
+ytfetch -a https://youtube.com/watch?v=VIDEO_ID
+```
 
-### Download Playlist
-<div class="code-block">
-<pre><code class="language-bash">ytfetch -p https://youtube.com/playlist?list=PLAYLIST_ID</code></pre>
-<button class="copy-button" onclick="copyCode(this)">Copy</button>
-</div>
+Download Playlist:
+```bash
+ytfetch -p https://youtube.com/playlist?list=PLAYLIST_ID
+```
 
-### Batch Download from File
-<div class="code-block">
-<pre><code class="language-bash">ytfetch -b videos.txt</code></pre>
-<button class="copy-button" onclick="copyCode(this)">Copy</button>
-</div>
+Batch Download from File:
+```bash
+ytfetch -b videos.txt
+```
 
-### Using Proxy
-<div class="code-block">
-<pre><code class="language-bash">ytfetch -x http://proxy.example.com:8080 https://youtube.com/watch?v=VIDEO_ID</code></pre>
-<button class="copy-button" onclick="copyCode(this)">Copy</button>
-</div>
+Using Proxy:
+```bash
+ytfetch -x http://proxy.example.com:8080 https://youtube.com/watch?v=VIDEO_ID
+```
 
 ## 📋 Command Options
 
@@ -100,23 +77,20 @@ cd YTFETCH</code></pre>
 
 ## 🎯 Examples
 
-### Download Best Quality
-<div class="code-block">
-<pre><code class="language-bash">ytfetch -r best https://youtube.com/watch?v=VIDEO_ID</code></pre>
-<button class="copy-button" onclick="copyCode(this)">📋</button>
-</div>
+Download Best Quality:
+```bash
+ytfetch -r best https://youtube.com/watch?v=VIDEO_ID
+```
 
-### Download MP3 Audio
-<div class="code-block">
-<pre><code class="language-bash">ytfetch -a -f mp3 https://youtube.com/watch?v=VIDEO_ID</code></pre>
-<button class="copy-button" onclick="copyCode(this)">📋</button>
-</div>
+Download MP3 Audio:
+```bash
+ytfetch -a -f mp3 https://youtube.com/watch?v=VIDEO_ID
+```
 
-### Batch Download with 4 Workers
-<div class="code-block">
-<pre><code class="language-bash">ytfetch -b videos.txt -m --workers 4</code></pre>
-<button class="copy-button" onclick="copyCode(this)">📋</button>
-</div>
+Batch Download with 4 Workers:
+```bash
+ytfetch -b videos.txt -m --workers 4
+```
 
 ## 🤝 Contributing
 
@@ -133,68 +107,4 @@ This tool is for educational purposes only. Please respect YouTube's terms of se
 ## 📦 About
 
 YTFETCH is a fast and versatile CLI YouTube downloader with support for video, audio, playlists, and parallel downloads. Built with Python and designed for efficiency and ease of use.
-
-<!------------------
-    Styles Section
-------------------->
-<style type="text/css">
-/* Hide this section in rendered markdown */
-.code-block {
-    position: relative;
-    margin: 10px 0;
-}
-
-.copy-button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    padding: 5px 8px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.2s;
-    font-size: 14px;
-}
-
-.copy-button:hover {
-    opacity: 1;
-}
-
-.copy-button.copied {
-    background-color: #45a049;
-}
-
-pre {
-    background-color: #f6f8fa;
-    padding: 16px;
-    border-radius: 6px;
-    overflow: auto;
-}
-
-.contribution-steps {
-    padding-left: 20px;
-}
-</style>
-
-<!------------------
-    Scripts Section
-------------------->
-<script type="text/javascript">
-/* Hide this section in rendered markdown */
-function copyCode(button) {
-    const pre = button.parentElement.querySelector('pre');
-    const code = pre.textContent;
-    navigator.clipboard.writeText(code);
-    
-    button.textContent = '✓';
-    button.classList.add('copied');
-    setTimeout(() => {
-        button.textContent = '📋';
-        button.classList.remove('copied');
-    }, 2000);
-}
-</script>
 
