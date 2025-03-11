@@ -31,6 +31,8 @@ python -m pip install -e .
 
 ## 💡 Usage
 
+All downloads are saved to your Desktop by default.
+
 Basic video download:
 ```bash
 ytfetch https://youtube.com/watch?v=VIDEO_ID

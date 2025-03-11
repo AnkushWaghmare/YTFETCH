@@ -10,6 +10,9 @@ from typing import Optional, Dict, Any
 
 import yt_dlp
 
+# Add this after existing imports
+DEFAULT_OUTPUT_DIR = os.path.join(os.path.expanduser('~'), 'Desktop')
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -61,6 +64,19 @@ def progress_hook(d: Dict[str, Any]) -> None:
     except Exception as e:
         logger.error(f"Progress hook error: {str(e)}")
 
+def check_ffmpeg():
+    """Check if FFmpeg is installed and accessible"""
+    try:
+        import subprocess
+        result = subprocess.run(['ffmpeg', '-version'], 
+                              stdout=subprocess.PIPE, 
+                              stderr=subprocess.PIPE,
+                              text=True)
+        return result.returncode == 0
+    except Exception:
+        logger.warning("FFmpeg not found. Video and audio streams may not merge properly.")
+        return False
+
 def create_ydl_opts(
     resolution: str,
     output_format: str,
@@ -70,32 +86,42 @@ def create_ydl_opts(
 ) -> Dict[str, Any]:
     """Create yt-dlp options with error handling"""
     try:
-        fmt = f"bestvideo[height<={resolution}]+bestaudio/best" if resolution.isdigit() else resolution
-
-        ydl_opts = {
-            "format": fmt,
-            "outtmpl": "%(title)s.%(ext)s",
-            "noplaylist": not is_playlist,
-            "quiet": True,
-            "proxy": proxy,
-            "progress_hooks": [progress_hook],
-            "writeinfojson": True,
-            "ignoreerrors": True,  # Skip unavailable videos in playlists
-            "no_warnings": True,
-            "extract_flat": "in_playlist",
-        }
+        output_template = os.path.join(DEFAULT_OUTPUT_DIR, '%(title)s.%(ext)s')
+        has_ffmpeg = check_ffmpeg()
 
         if extract_audio:
-            ydl_opts.update({
+            return {
                 "format": "bestaudio/best",
+                "outtmpl": output_template,
                 "postprocessors": [{
                     "key": "FFmpegExtractAudio",
                     "preferredcodec": output_format,
                     "preferredquality": "192",
                 }],
-            })
+                "quiet": True,
+                "proxy": proxy,
+                "progress_hooks": [progress_hook],
+            }
 
-        return ydl_opts
+        # Video format selection based on FFmpeg availability
+        video_format = ""
+        if resolution.isdigit():
+            video_format = (f"best[height<={resolution}]" if not has_ffmpeg else
+                          f"bestvideo[height<={resolution}]+bestaudio/best[height<={resolution}]")
+        else:
+            video_format = "best" if not has_ffmpeg else "bestvideo+bestaudio/best"
+
+        return {
+            "format": video_format,
+            "outtmpl": output_template,
+            "merge_output_format": output_format,
+            "quiet": True,
+            "proxy": proxy,
+            "progress_hooks": [progress_hook],
+            "noplaylist": not is_playlist,
+            "ignoreerrors": True,
+        }
+
     except Exception as e:
         logger.error(f"Error creating yt-dlp options: {str(e)}")
         raise
