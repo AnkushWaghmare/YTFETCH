@@ -358,3 +358,4 @@ Usage: ytfetch [OPTIONS] URL
 
 if __name__ == "__main__":
     main()
+#this is the end of the script
