@@ -7,8 +7,9 @@ import time
 import sys
 from functools import partial
 from typing import Optional, Dict, Any
-
 import yt_dlp
+import shutil
+import subprocess
 
 # Add this after existing imports
 DEFAULT_OUTPUT_DIR = os.path.join(os.path.expanduser('~'), 'Desktop')
@@ -64,18 +65,71 @@ def progress_hook(d: Dict[str, Any]) -> None:
     except Exception as e:
         logger.error(f"Progress hook error: {str(e)}")
 
+def find_ffmpeg():
+    """Find FFmpeg binary path"""
+    try:
+        # Check if ffmpeg is in PATH
+        ffmpeg_path = shutil.which('ffmpeg')
+        if ffmpeg_path:
+            return ffmpeg_path
+            
+        # Mac-specific Homebrew paths first
+        mac_paths = [
+            '/opt/homebrew/bin/ffmpeg',
+            '/usr/local/bin/ffmpeg',
+        ]
+        
+        # Common FFmpeg locations
+        common_locations = [
+            *mac_paths,
+            '/usr/bin/ffmpeg',
+            'C:\\ffmpeg\\bin\\ffmpeg.exe',  # Windows
+        ]
+        
+        for location in common_locations:
+            if os.path.isfile(location):
+                return location
+                
+        return None
+    except Exception:
+        return None
+
 def check_ffmpeg():
     """Check if FFmpeg is installed and accessible"""
     try:
-        import subprocess
-        result = subprocess.run(['ffmpeg', '-version'], 
+        ffmpeg_path = find_ffmpeg()
+        if not ffmpeg_path:
+            # Detect OS for specific instructions
+            if sys.platform == "darwin":  # macOS
+                install_cmd = "brew install ffmpeg"
+                if not shutil.which('brew'):
+                    install_cmd = "First install Homebrew from https://brew.sh, then run: " + install_cmd
+            elif sys.platform == "linux":
+                install_cmd = "sudo apt-get install ffmpeg  # For Ubuntu/Debian\nsudo dnf install ffmpeg  # For Fedora"
+            else:  # Windows
+                install_cmd = "Download from https://ffmpeg.org/download.html"
+            
+            logger.error(f"""
+FFmpeg is required but not found! 
+
+Installation instructions for your system:
+{install_cmd}
+
+After installing, try running the command again.
+""")
+            return False, None
+            
+        result = subprocess.run([ffmpeg_path, '-version'], 
                               stdout=subprocess.PIPE, 
                               stderr=subprocess.PIPE,
                               text=True)
-        return result.returncode == 0
-    except Exception:
-        logger.warning("FFmpeg not found. Video and audio streams may not merge properly.")
-        return False
+        if result.returncode == 0:
+            logger.info("FFmpeg found at: " + ffmpeg_path)
+            return True, ffmpeg_path
+        return False, None
+    except Exception as e:
+        logger.error(f"FFmpeg check failed: {str(e)}")
+        return False, None
 
 def create_ydl_opts(
     resolution: str,
@@ -87,40 +141,42 @@ def create_ydl_opts(
     """Create yt-dlp options with error handling"""
     try:
         output_template = os.path.join(DEFAULT_OUTPUT_DIR, '%(title)s.%(ext)s')
-        has_ffmpeg = check_ffmpeg()
+        has_ffmpeg, ffmpeg_path = check_ffmpeg()
+
+        if not has_ffmpeg:
+            raise DownloadError("Please install FFmpeg first and try again")
+
+        common_opts = {
+            "outtmpl": output_template,
+            "quiet": True,
+            "proxy": proxy,
+            "progress_hooks": [progress_hook],
+            "ffmpeg_location": ffmpeg_path,
+        }
 
         if extract_audio:
-            return {
+            common_opts.update({
                 "format": "bestaudio/best",
-                "outtmpl": output_template,
                 "postprocessors": [{
                     "key": "FFmpegExtractAudio",
                     "preferredcodec": output_format,
                     "preferredquality": "192",
                 }],
-                "quiet": True,
-                "proxy": proxy,
-                "progress_hooks": [progress_hook],
-            }
+            })
+            return common_opts
 
-        # Video format selection based on FFmpeg availability
-        video_format = ""
-        if resolution.isdigit():
-            video_format = (f"best[height<={resolution}]" if not has_ffmpeg else
-                          f"bestvideo[height<={resolution}]+bestaudio/best[height<={resolution}]")
-        else:
-            video_format = "best" if not has_ffmpeg else "bestvideo+bestaudio/best"
+        # Video format selection
+        video_format = (f"bestvideo[height<={resolution}]+bestaudio/best[height<={resolution}]"
+                       if resolution.isdigit() else "bestvideo+bestaudio/best")
 
-        return {
+        common_opts.update({
             "format": video_format,
-            "outtmpl": output_template,
             "merge_output_format": output_format,
-            "quiet": True,
-            "proxy": proxy,
-            "progress_hooks": [progress_hook],
             "noplaylist": not is_playlist,
             "ignoreerrors": True,
-        }
+        })
+
+        return common_opts
 
     except Exception as e:
         logger.error(f"Error creating yt-dlp options: {str(e)}")
